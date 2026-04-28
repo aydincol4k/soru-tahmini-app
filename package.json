@@ -1,0 +1,81 @@
+{
+  "name": "soru-tahmini-app",
+  "version": "0.2.1",
+  "description": "Slayt + çıkmış soru + el notu PDF'lerinden Claude Agent SDK ile sınav sorusu tahmini üreten Electron masaüstü uygulaması",
+  "main": "dist/main/main.js",
+  "author": "aydincol4k",
+  "license": "MIT",
+  "private": true,
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/aydincol4k/soru-tahmini-app.git"
+  },
+  "bugs": {
+    "url": "https://github.com/aydincol4k/soru-tahmini-app/issues"
+  },
+  "homepage": "https://github.com/aydincol4k/soru-tahmini-app#readme",
+  "scripts": {
+    "dev": "concurrently -k \"npm run dev:renderer\" \"npm run dev:main\"",
+    "dev:renderer": "vite",
+    "dev:main": "tsc -p tsconfig.main.json -w",
+    "build": "npm run build:renderer && npm run build:main",
+    "build:renderer": "vite build",
+    "build:main": "tsc -p tsconfig.main.json",
+    "start": "electron .",
+    "dist": "npm run build && electron-builder",
+    "dist:mac": "npm run build && electron-builder --mac",
+    "dist:win": "npm run build && electron-builder --win"
+  },
+  "dependencies": {
+    "@anthropic-ai/claude-agent-sdk": "^0.1.0",
+    "p-limit": "^5.0.0",
+    "pdf-to-img": "^4.2.0",
+    "pdfkit": "^0.15.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "zod": "^3.25.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.0",
+    "@types/pdfkit": "^0.13.4",
+    "@types/react": "^18.3.3",
+    "@types/react-dom": "^18.3.0",
+    "@vitejs/plugin-react": "^4.3.1",
+    "concurrently": "^8.2.2",
+    "electron": "^31.0.0",
+    "electron-builder": "^24.13.3",
+    "typescript": "^5.4.5",
+    "vite": "^5.3.1"
+  },
+  "build": {
+    "appId": "com.sorutahmini.app",
+    "productName": "Soru Tahmini",
+    "directories": {
+      "output": "release"
+    },
+    "asar": false,
+    "files": [
+      "dist/**/*",
+      "package.json"
+    ],
+    "extraResources": [
+      {
+        "from": "src/main/prompts",
+        "to": "prompts",
+        "filter": ["**/*.md"]
+      },
+      {
+        "from": "node_modules/pdfjs-dist/standard_fonts",
+        "to": "fonts",
+        "filter": ["LiberationSans-*.ttf"]
+      }
+    ],
+    "mac": {
+      "target": "dmg",
+      "category": "public.app-category.education"
+    },
+    "win": {
+      "target": "nsis"
+    }
+  }
+}

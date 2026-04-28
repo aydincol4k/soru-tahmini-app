@@ -1,0 +1,41 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+release/
+workspaces/
+
+# Logs
+*.log
+
+# OS / Editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Environment / secrets
+.env
+.env.local
+.env.*.local
+*.local
+secrets/
+*.key
+*.pem
+
+# Generated artifacts
+*.pdf
+
+# Claude / AI tooling artifacts
+.claude/
+.cursor/
+CLAUDE.md
+AGENTS.md
+.aider*
+plans/
+
+# Personal notes
+*.txt
+NOTES.md
+TODO.md
