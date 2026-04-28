@@ -13,7 +13,7 @@ Slayt sunumları + çıkmış sorular + el yazısı notlardan, Claude Agent SDK 
 - **İstediğin kadar soru:** kullanıcıdan N alınır, Claude bu sayıda özgün soru üretir
 - **PDF çıktı:** `pdfkit` ile düzgün biçimli, opsiyonel cevap anahtarlı PDF
 - **Uzun PDF'lerde map-reduce chunking:** ayarlanabilir chunk boyutu (varsayılan 20 sayfa)
-- **İlk açılışta API key onboarding:** `safeStorage` ile şifreli saklama
+- **İki auth modu:** Anthropic API key (`safeStorage` ile şifreli) **veya** Claude Code aboneliği (Pro/Max OAuth oturumu)
 - **Paralel bağımsız job'lar:** slayt + el notu + çıkmış soru analizleri aynı anda
 - **Streaming progress:** aşama, yüzde ve canlı log
 
@@ -27,7 +27,12 @@ npm run dev       # renderer (Vite) + main (tsc -w) paralel başlatır
 npm start         # Electron pencereyi aç
 ```
 
-İlk açılışta API key istenir; `console.anthropic.com` üzerinden alınabilir. API key cihaza özel olarak Electron `safeStorage` ile şifrelenip saklanır, repo'ya **gönderilmez**.
+İlk açılışta auth modu sorulur:
+
+1. **Anthropic API key (kullandıkça öde)** — [console.anthropic.com](https://console.anthropic.com) üzerinden alınır. Cihaza özel olarak Electron `safeStorage` ile şifrelenip saklanır, repo'ya **gönderilmez**.
+2. **Claude Code aboneliği (Pro/Max)** — Sistemde Claude Code CLI kuruluysa (`~/.claude/.credentials.json`) uygulama bu OAuth oturumunu kullanır. **Ekstra API ücreti yok**, mevcut Claude.ai aboneliğinin limiti dahilinde çalışır. Bir kez terminalde `claude` çalıştırıp giriş yapmış olman yeterli.
+
+İki mod arasında uygulama içinden istediğin zaman geçiş yapabilirsin.
 
 ## Paketleme
 
@@ -39,7 +44,7 @@ npm run dist:mac     # .dmg (yalnızca macOS'ta)
 npm run dist:win     # .exe (NSIS, yalnızca Windows'ta veya wine ile Linux'ta)
 ```
 
-**Release — GitHub Actions ile çapraz-platform otomatik build:**
+**Release — GitHub Actions + manuel Windows:**
 
 `.github/workflows/release.yml` tanımlı. Kullanım:
 
@@ -48,20 +53,33 @@ git tag v0.1.0
 git push --tags
 ```
 
-Workflow otomatik olarak:
-1. macOS runner'da `.dmg` üretir
-2. Windows runner'da `.exe` üretir
-3. İki dosyayı GitHub Release sayfasına yükler (tag adıyla)
+Workflow otomatik olarak macOS runner'da `.dmg` üretip GitHub Release sayfasına yükler. `workflow_dispatch` ile manuel de tetiklenebilir.
 
-GitHub → Releases sekmesinden kullanıcılar indirebilir. `workflow_dispatch`
-ile manuel de tetiklenebilir (tag olmadan sadece artifact bırakır, release
-oluşturmaz).
+> **Windows .exe CI'da üretilmiyor.** `pdfjs-dist`'in alt bağımlılığı `canvas`
+> paketi GitHub Actions Windows runner'ında native compile edilemiyor
+> (MSBuild + node-gyp uyumsuzluğu). Yerel makinede Visual Studio Build Tools
+> mevcut olduğu için sorunsuz build alınabilir. Yeni bir release için akış:
+>
+> ```bash
+> # 1. Tag at -> CI macOS .dmg'yi otomatik release'e atar
+> git tag v0.2.1 && git push --tags
+>
+> # 2. Yerel olarak Windows installer'i uret
+> npm install
+> npm run dist:win
+> # release\Soru Tahmini Setup 0.2.1.exe ciktisi
+>
+> # 3. Olusan .exe'yi release'e ekle
+> gh release upload v0.2.1 "release/Soru Tahmini Setup 0.2.1.exe"
+> ```
 
-> **Not:** İmzasız build'de Mac kullanıcıları "doğrulanmamış geliştirici"
-> uyarısı görür (Sistem Ayarları → Güvenlik'ten "yine de aç"). Windows'ta
-> SmartScreen "bilinmeyen yayıncı" der ("More info" → "Run anyway"). Kod
-> imzası almak istersen `CSC_LINK` + `CSC_KEY_PASSWORD` secret'larını ekleyip
-> workflow'daki `CSC_IDENTITY_AUTO_DISCOVERY` satırını kaldır.
+> **macOS Intel desteği yok.** GitHub'ın `macos-latest` runner'ı artık
+> Apple Silicon (arm64). Intel Mac için yerel `npm run dist:mac` çalıştırılabilir.
+
+> **İmzasız build uyarıları:**
+> - macOS: "doğrulanmamış geliştirici" uyarısı → Sistem Ayarları → Gizlilik ve Güvenlik → "Yine de aç"
+> - Windows: SmartScreen "bilinmeyen yayıncı" → "More info" → "Run anyway"
+> - Kod imzası almak istersen `CSC_LINK` + `CSC_KEY_PASSWORD` secret'larını ekleyip workflow'daki `CSC_IDENTITY_AUTO_DISCOVERY` satırını kaldır.
 
 ## Dizin
 
