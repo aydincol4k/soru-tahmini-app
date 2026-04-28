@@ -3,8 +3,11 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Electron](https://img.shields.io/badge/Electron-31-47848F?logo=electron&logoColor=white)](https://www.electronjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.4-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![Latest Release](https://img.shields.io/github/v/release/aydincol4k/soru-tahmini-app?include_prereleases&label=indir&color=brightgreen)](https://github.com/aydincol4k/soru-tahmini-app/releases/latest)
 
 Slayt sunumları + çıkmış sorular + el yazısı notlardan, Claude Agent SDK ile sınavda çıkması olası soruları tahmin edip **PDF** çıktısı veren Electron masaüstü uygulaması. Mac ve Windows'ta çalışır.
+
+**📥 İndir:** [En son sürüm — Releases sayfası](https://github.com/aydincol4k/soru-tahmini-app/releases/latest) (Windows `.exe` + macOS `.dmg`)
 
 ## Özellikler
 
