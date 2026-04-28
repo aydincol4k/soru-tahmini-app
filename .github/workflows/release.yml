@@ -11,6 +11,9 @@ permissions:
 
 jobs:
   build:
+    # CI sadece macOS .dmg uretir. Windows .exe icin canvas (pdfjs-dist alt
+    # bagimliligi) GitHub runner'da native compile edilemiyor; .exe yerel
+    # 'npm run dist:win' ile uretilip release'e manuel upload ediliyor.
     strategy:
       fail-fast: false
       matrix:
@@ -19,10 +22,6 @@ jobs:
             name: macOS
             artifact: "*.dmg"
             build_cmd: "npm run dist:mac"
-          - os: windows-latest
-            name: Windows
-            artifact: "*.exe"
-            build_cmd: "npm run dist:win"
 
     runs-on: ${{ matrix.os }}
     name: Build ${{ matrix.name }}
@@ -72,10 +71,23 @@ jobs:
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          files: |
-            artifacts/**/*.dmg
-            artifacts/**/*.exe
+          files: artifacts/**/*.dmg
           draft: false
           generate_release_notes: true
+          body: |
+            ## Indirme
+
+            - **macOS (Apple Silicon)**: `Soru.Tahmini-*-arm64.dmg`
+            - **Windows**: `Soru.Tahmini.Setup.*.exe` (yerel build, manuel eklenir)
+
+            ## Notlar
+
+            - Windows .exe CI'da uretilmiyor; `pdfjs-dist`'in alt bagimliligi `canvas`
+              GitHub runner'da native compile edilemiyor. .exe yerel 'npm run dist:win'
+              ile uretilip release'e manuel ekleniyor.
+            - macOS imzasiz build: ilk acista "dogrulanmamis gelistirici" uyarisi
+              cikabilir. Sistem Ayarlari -> Gizlilik ve Guvenlik -> "Yine de ac".
+            - Windows imzasiz build: SmartScreen uyarisi cikabilir.
+              "More info" -> "Run anyway".
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
